@@ -61,7 +61,7 @@ pei "kubectl label edgedevice -n ny pos-ny app=pos"
 pei "kubectl label edgedevice -n ny kiosk-ny app=kiosk"
 
 pei "# Let's deploy now some workloads"
-pei "# Just deploy a workload to all x86 server"
+pei "# Just deploy a workload to all x86 servers"
 pei "cat x86-deploy.yaml"
 pei "kubectl apply -f x86-deploy.yaml"
 
