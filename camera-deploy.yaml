@@ -1,0 +1,15 @@
+apiVersion: management.project-flotta.io/v1alpha1
+kind: EdgeWorkload
+metadata:
+  name: camera-rec
+  namespace: ny
+spec:
+  deviceSelector:
+    matchLabels:
+      app: camera
+  type: pod
+  pod:
+    spec:
+      containers:
+        - name: random-server
+          image: quay.io/project-flotta/nginx:1.21.6

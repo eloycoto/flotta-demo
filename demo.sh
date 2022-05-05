@@ -55,6 +55,25 @@ pei "kubectl patch edsr kiosk-ny --type='json' -p='[{\"op\": \"replace\", \"path
 pei "kubectl get edgedevices -n ny"
 pei "# All devices are now up!"
 
-cleanup > /dev/null 2> /dev/null
-exit
+pei "# let's add some labels to the edgedevices"
+pei "kubectl label edgedevice -n ny camera-ny app=camera"
+pei "kubectl label edgedevice -n ny pos-ny app=pos"
+pei "kubectl label edgedevice -n ny kiosk-ny app=kiosk"
 
+pei "# Let's deploy now some workloads"
+pei "cat x86-deploy.yaml"
+pei "kubectl apply -f x86-deploy.yaml"
+
+pei "cat camera-deploy.yaml"
+pei "kubectl apply -f camera-deploy.yaml"
+
+pei "# Now edgedevices will deploy the workloads"
+pei "kubectl get -n ny edgedevice camera-ny -o json | jq '.status.workloads'"
+pei "kubectl get -n ny edgedevice kiosk-ny -o json | jq '.status.workloads'"
+pei "#Now your edgedevices are up&running"
+
+kill -9 $(pgrep asciinema) /dev/null 2> /dev/null
+cleanup > /dev/null 2> /dev/null
+
+
+exit
