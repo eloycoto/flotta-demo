@@ -36,7 +36,7 @@ cleanup > /dev/null 2> /dev/null
 
 
 pei "# Lets see if flotta is installed in the kubernetes cluster"
-pei "kubectl api-resources | grep flotta"
+pei "kubectl api-resources --api-group='management.project-flotta.io'"
 pei "# Ok, all is installed, let's check if any device is up"
 pei "kubectl get edsr"
 
@@ -61,19 +61,29 @@ pei "kubectl label edgedevice -n ny pos-ny app=pos"
 pei "kubectl label edgedevice -n ny kiosk-ny app=kiosk"
 
 pei "# Let's deploy now some workloads"
+pei "# Just deploy a workload to all x86 server"
 pei "cat x86-deploy.yaml"
 pei "kubectl apply -f x86-deploy.yaml"
 
+pei "# Just deploy the camera recording to all cameras"
 pei "cat camera-deploy.yaml"
 pei "kubectl apply -f camera-deploy.yaml"
 
-pei "# Now edgedevices will deploy the workloads"
+pei "# Now edgedevices will deploy the workloads and report in status"
 pei "kubectl get -n ny edgedevice camera-ny -o json | jq '.status.workloads'"
 pei "kubectl get -n ny edgedevice kiosk-ny -o json | jq '.status.workloads'"
-pei "#Now your edgedevices are up&running"
 
-kill -9 $(pgrep asciinema) /dev/null 2> /dev/null
+pei "# Let's wait for all workloads are running"
+
+while kubectl get edgedevices --all-namespaces -o json | jq '.items[].status.workloads[]' | grep Deploying > /dev/null;
+do
+    sleep 1
+done
+
+pei "kubectl get -n ny edgedevice camera-ny -o json | jq '.status.workloads'"
+pei "# Now your edgedevices are up&running"
+
+kill -9 $(pgrep asciinema) > /dev/null 2> /dev/null
 cleanup > /dev/null 2> /dev/null
-
 
 exit
